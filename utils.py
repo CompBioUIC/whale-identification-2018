@@ -186,10 +186,11 @@ def distance_matrix_vector(anchor, positive, d2_sq):
 def dm2cm(dm, labels):
     cl = set(labels.detach().cpu().numpy())
     n_cl = len(cl)
-    dists = torch.zeros(dm.size(0),n_cl)
+    dists = 2.0 * torch.ones(dm.size(0),n_cl)
     for i in range(n_cl):
         mask = labels == i
-        dists[:,i] = dm[:,mask].min(dim=1)[0]
+        if any(mask):
+            dists[:,i] = dm[:,mask].min(dim=1)[0]
     return dists
 
 def dm2cm_with_idxs(dm, labels):
